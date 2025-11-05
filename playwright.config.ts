@@ -33,14 +33,24 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   /* ENABLE_MSW=true is only set here - MSW will NOT run during normal npm run dev */
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-    env: {
-      ENABLE_MSW: 'true', // Only set during Playwright tests - MSW inactive during normal dev
+  webServer: [
+    // Start MSW server on port 3001
+    {
+      command: 'npm run msw:server',
+      url: 'http://localhost:3001',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120 * 1000,
     },
-  },
+    // Start Next.js dev server on port 3000
+    {
+      command: 'npm run dev',
+      url: 'http://localhost:3000',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120 * 1000,
+      env: {
+        ENABLE_MSW: 'true', // Only set during Playwright tests - MSW inactive during normal dev
+      },
+    },
+  ],
 });
 
